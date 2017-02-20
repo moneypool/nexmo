@@ -26,20 +26,24 @@ module Nexmo
       @secret = options.fetch(:secret) { ENV.fetch('NEXMO_API_SECRET') }
     end
 
-    def send_verification_request(params)
+    def start_verification(params)
       post('/verify/json', params)
     end
 
-    def check_verification_request(params)
-      post('/verify/check/json', params)
+    def check_verification(request_id, params)
+      post('/verify/check/json', params.merge(request_id: request_id))
     end
 
-    def get_verification_request(id)
-      get('/verify/search/json', :request_id => id)
+    def get_verification(request_id)
+      get('/verify/search/json', request_id: request_id)
     end
 
-    def control_verification_request(params)
-      post('/verify/control/json', params)
+    def cancel_verification(request_id)
+      post('/verify/control/json', request_id: request_id, cmd: 'cancel')
+    end
+
+    def trigger_next_verification_event(request_id)
+      post('/verify/control/json', request_id: request_id, cmd: 'trigger_next_event')
     end
 
     private
